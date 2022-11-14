@@ -1,23 +1,21 @@
 import datetime
+import subprocess
 import pyjokes
 import pyttsx3
 import pywhatkit
 import speech_recognition as sr
 import wikipedia
-from hackbash import *
-import subprocess
+import requests
+
 
 listener = sr.Recognizer()
 engine = pyttsx3.init()
 voices = engine.getProperty('voices')
 engine.setProperty('voice', voices[1].id)
 
-hack_web = print(subprocess.run(["/hackbash/lightcoder.sh", "facebook.com"], shell=True))
-
 def talk(text):
     engine.say(text)
     engine.runAndWait()
-
 
 def take_command():
     try:
@@ -44,8 +42,8 @@ def run_flipper():
     elif 'time' in command:
         time = datetime.datetime.now().strftime('%I:%M %p')
         talk('The time is ' + time)
-    elif 'who is this' in command:
-        person = command.replace('who the heck is', '')
+    elif 'who is' in command:
+        person = command.replace('who is', '')
         info = wikipedia.summary(person, 1)
         print(info)
         talk(info)
@@ -53,9 +51,20 @@ def run_flipper():
         talk('Sorry, but I am in a relationship with your laptop')
     elif 'joke' in command:
         talk(pyjokes.get_joke())
-    else:
-        talk('Can you say that again?')
+    elif 'hack' in command:
+        talk('Sure, Running a penetration testing assessment')
+        pro = subprocess.run('/attack.sh')
+        print(pro.returncode)
+    elif "ip address" in command:
+        ip = requests.get('https://api.ipify.org').text
+        print(ip)
+        talk(f"Your ip address is {ip}")
+    elif "shutdown" in command or "offline" in command:
+        talk("Alright, going offline. It was nice working with you")
+        sys.exit()
 
+    else:
+        talk('Can you repeat that again?')
 
 
 while True:

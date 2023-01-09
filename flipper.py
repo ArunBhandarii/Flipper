@@ -7,7 +7,6 @@ import speech_recognition as sr
 import wikipedia
 import requests
 
-
 listener = sr.Recognizer()
 engine = pyttsx3.init()
 voices = engine.getProperty('voices')
@@ -16,6 +15,8 @@ engine.setProperty('voice', voices[1].id)
 def talk(text):
     engine.say(text)
     engine.runAndWait()
+    engine.setProperty('voice', voices[0].id)
+    
 
 def take_command():
     try:
@@ -30,7 +31,6 @@ def take_command():
     except:
         pass
     return command
-
 
 def run_flipper():
     command = take_command()
@@ -52,9 +52,10 @@ def run_flipper():
     elif 'joke' in command:
         talk(pyjokes.get_joke())
     elif 'hack' in command:
-        talk('Sure, Running a penetration testing assessment')
-        pro = subprocess.run('/attack.sh')
-        print(pro.returncode)
+        talk('Sure, what should I hack?')
+        target = take_command()
+        talk(f'Running a penetration testing assessment on {target}')
+        subprocess.run(['/flipper.sh', target])
     elif "ip address" in command:
         ip = requests.get('https://api.ipify.org').text
         print(ip)
@@ -62,10 +63,8 @@ def run_flipper():
     elif "shutdown" in command or "offline" in command:
         talk("Alright, going offline. It was nice working with you")
         sys.exit()
-
     else:
         talk('Can you repeat that again?')
-
 
 while True:
     run_flipper()
